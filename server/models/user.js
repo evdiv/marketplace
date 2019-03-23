@@ -10,7 +10,7 @@ const User = mongoose.model('User', {
     email: {
         type: String,
         required: true,
-        minlength: 25,
+        minlength: 5,
         trim: true
     },
     password: {
@@ -20,11 +20,11 @@ const User = mongoose.model('User', {
     phone: {
         type: String,
         required: false,
-    }
+    },
     active: {
         type: Boolean,
         default: true
     },
 });
 
-module.exports = {User}
+module.exports = User

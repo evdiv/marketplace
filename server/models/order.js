@@ -24,7 +24,7 @@ const Order = mongoose.model('Order', {
     active: {
         type: Boolean,
         default: false
-    },
+    }
 });
 
-module.exports = {Order}
+module.exports = Order

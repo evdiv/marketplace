@@ -1,10 +1,10 @@
-require('../config/config');
+const { db } = require('../config/config');
 
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(db, {
     useNewUrlParser: true,
     useFindAndModify: false
 });

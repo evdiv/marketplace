@@ -3,16 +3,17 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 
-const verifyToken = require('./verifyToken');
+const bcrypt = require('bcryptjs');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-var User = require('../models/User');
+const User = require('../models/User');
 
 
 router.post('/', async function (req, res) {
     const data = _.pick(req.body, ['name', 'email', 'password', 'phone'])
+    data.password = await bcrypt.hash(req.body.password, 8)
     try {
         const user = await User.create(data)
         if(!user) {
@@ -34,7 +35,7 @@ router.get('/', async function (req, res) {
         }
         res.status(200).send(users)
     } catch(err) {
-        return res.status(500).send("There was a problem finding the users.")
+        return res.status(500).send("There was a problem finding the users." + err)
     }
 });
 
@@ -50,7 +51,6 @@ router.get('/:id', async function (req, res) {
         return res.status(500).send("There was a problem finding the user.")
     }
 });
-
 
 
 router.delete('/:id', async function (req, res) {
@@ -69,6 +69,7 @@ router.delete('/:id', async function (req, res) {
 
 router.put('/:id', async function (req, res) {
     const data = _.pick(req.body, ['name', 'email', 'phone', 'password'])
+    data.password = await bcrypt.hash(req.body.password, 8)
     try {
         const user = User.findByIdAndUpdate(req.params.id, data, {new: true});
         if(!user) {
@@ -78,3 +79,5 @@ router.put('/:id', async function (req, res) {
         return res.status(500).send("There was a problem updating the user.");
     }
 });
+
+module.exports = router;

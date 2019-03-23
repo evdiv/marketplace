@@ -3,14 +3,14 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 
-const verifyToken = require('./verifyToken');
-
 router.use(bodyParser.urlencoded({ extended: true }));
-var Order = require('../models/Order');
+router.use(bodyParser.json());
 
+const Order = require('../models/order');
 
 router.post('/', async function (req, res) {
     const data = _.pick(req.body, ['title', 'description', 'maxPrice', 'dueDate', 'active'])
+
     try {
         const order = await Order.create(data)
         if(!order) {
@@ -18,10 +18,9 @@ router.post('/', async function (req, res) {
         }
         res.status(200).send(order)
     } catch(err) {
-        return res.status(500).send("There was a problem adding the information to the database.")
+        return res.status(500).send("There was a problem adding the information to the database." + err)
     }
 });
-
 
 
 router.get('/', async function (req, res) {
@@ -32,7 +31,7 @@ router.get('/', async function (req, res) {
         }
         res.status(200).send(orders)
     } catch(err) {
-        return res.status(500).send("There was a problem finding the orders.")
+        return res.status(500).send("There was a problem finding the orders." + err)
     }
 });
 
@@ -76,3 +75,5 @@ router.put('/:id', async function (req, res) {
         return res.status(500).send("There was a problem updating the user.");
     }
 });
+
+module.exports = router;

@@ -1,9 +1,13 @@
-const env = process.env.NODE_ENV || 'development';
-process.env.PORT = process.env.PORT || 3000;
+require('dotenv').config();
 
-if(env === 'development') {
-    process.env.MONGODB_URI = 'mongodb://localhost:27017/youdo'
-} else if(env === 'test') {
-    process.env.MONGODB_URI = 'mongodb://localhost:27017/youdoTest'
+let db = process.env.MONGODB_URI
+
+ if(process.env.NODE_ENV === 'test') {
+    db = process.env.TEST_MONGODB_URI
 }
 
+module.exports = {
+    db,
+    port: process.env.PORT,
+    secret: process.env.JWT_SECRET
+  };
