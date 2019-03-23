@@ -1,30 +1,30 @@
 const mongoose = require('mongoose');
 
-const Order = mongoose.model('Order', {
-    title: {
+const User = mongoose.model('User', {
+    name: {
         type: String,
         required: true,
         minlength: 5,
         trim: true
     },
-    description: {
+    email: {
         type: String,
         required: true,
         minlength: 25,
         trim: true
     },
-    maxPrice: {
-        type: Number,
-        required: false,
+    password: {
+        type: String,
+        required: true,
     },
-    dueDate: {
-        type: Date,
+    phone: {
+        type: String,
         required: false,
-    },
+    }
     active: {
         type: Boolean,
-        default: false
+        default: true
     },
 });
 
-module.exports = {Order}
+module.exports = {User}
