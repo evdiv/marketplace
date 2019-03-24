@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
 
 const User = mongoose.model('User', {
     name: {
@@ -25,6 +26,10 @@ const User = mongoose.model('User', {
         type: Boolean,
         default: true
     },
+    orders: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Order'
+    }]
 });
 
 module.exports = User

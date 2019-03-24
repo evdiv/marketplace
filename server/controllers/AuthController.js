@@ -16,10 +16,10 @@ const config = require('../config/config');
 const User = require('../models/User');
 
 
-router.post('/login', async function(req, res) {
+router.post('/login', async (req, res) => {
 
     try{
-        const user = await User.findOne({ email: req.body.email })
+        const user = await User.findOne({ email: req.body.email }).populate('orders')
         if(!user) {
             res.status(404).send('No user found.')
         }
@@ -45,12 +45,12 @@ router.post('/login', async function(req, res) {
 });
 
 
-router.get('/logout', function(req, res) {
+router.get('/logout',  (req, res) => {
     res.status(200).send({ auth: false, token: null });
 });
 
 
-router.post('/register', async function(req, res) {
+router.post('/register', async (req, res) => {
     const data = _.pick(req.body, ['name', 'email', 'password', 'phone'])
     data.password = await bcrypt.hash(req.body.password, 8)
     try {
@@ -72,7 +72,7 @@ router.post('/register', async function(req, res) {
 })
 
 
-router.get('/account', verifyToken, async function(req, res) {
+router.get('/account', verifyToken, async (req, res) =>{
     try {
         const user = await User.findById(req.userId, { password: 0 })
         if(!user) {

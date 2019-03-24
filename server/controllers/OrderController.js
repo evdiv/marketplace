@@ -3,74 +3,100 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 
+const verifyToken = require('../middlewares/verifyToken');
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 const Order = require('../models/order');
+const User = require('../models/User');
 
-router.post('/', async function (req, res) {
+router.post('/', verifyToken, async (req, res) => {
     const data = _.pick(req.body, ['title', 'description', 'maxPrice', 'dueDate', 'active'])
 
     try {
-        const order = await Order.create(data)
+        const user = await User.findById(req.userId, { password: 0 })
+        const order = new Order(data)
+
+        order.customer = user
+        await order.save()
+
+        user.orders.push(order)
+        await user.save()
+
         if(!order) {
             return res.status(404).send({})
         }
-        res.status(200).send(order)
+        res.status(201).send({order})
     } catch(err) {
-        return res.status(500).send("There was a problem adding the information to the database." + err)
+        return res.status(500).send("There was a problem adding the order to the database." + err)
     }
 });
 
 
-router.get('/', async function (req, res) {
+router.get('/', async (req, res) => {
     try {
         const orders = await Order.find({})
         if(!orders) {
             return res.status(404).send({})
         }
-        res.status(200).send(orders)
+        res.status(200).send({orders})
     } catch(err) {
         return res.status(500).send("There was a problem finding the orders." + err)
     }
 });
 
 
-router.get('/:id', async function (req, res) {
+router.get('/:id', async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id)
+        const order = await Order.findById(req.params.id).populate('customer', { password: 0 })
         if(!order) {
-            return res.status(404).send("No user found.");
+            return res.status(404).send("No order found.");
         }
-        res.status(200).send(order);
+        res.status(200).send({order});
     } catch(err) {
-        return res.status(500).send("There was a problem finding the user.")
+        return res.status(500).send("There was a problem finding the order." + err)
     }
 });
 
 
 
-router.delete('/:id', async function (req, res) {
+router.delete('/:id', verifyToken, async (req, res) => {
     try {
-        const order = Order.findByIdAndRemove(req.params.id);
+        const order = await Order.findById(req.params.id);
         if(!order) {
-            return res.status(404).send("No user found.");
+            return res.status(404).send("No order found.");
         }
-        res.status(200).send(order);
+
+        if(order.customer.toHexString() !== req.userId) {
+            return res.status(403).send("You don't have enough permissions to delete this order");
+        }
+
+        await Order.findByIdAndRemove(req.params.id)
+
+        res.status(201).send({order});
     }catch(err) {
-        return res.status(500).send("There was a problem deleting the user.");
+        return res.status(500).send("There was a problem deleting the order.");
     }
 });
 
 
 
-router.put('/:id', async function (req, res) {
+router.patch('/:id', verifyToken, async (req, res) => {
     const data = _.pick(req.body, ['title', 'description', 'maxPrice', 'dueDate', 'active'])
     try {
-        const order = Order.findByIdAndUpdate(req.params.id, data, {new: true});
+        let order = await Order.findById(req.params.id);
         if(!order) {
-            return res.status(404).send("No user found.");
-        }        
+            return res.status(404).send("No order found.");
+        }
+
+        if(order.customer.toHexString() !== req.userId) {
+            return res.status(403).send("You don't have enough permissions to edit this order");
+        }
+
+        order = await Order.findByIdAndUpdate(req.params.id, data, {new: true});
+        return res.status(201).send({order});
+      
     }catch(err) {
         return res.status(500).send("There was a problem updating the user.");
     }

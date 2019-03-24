@@ -11,8 +11,9 @@ router.use(bodyParser.json());
 const User = require('../models/User');
 
 
-router.post('/', async function (req, res) {
+router.post('/', async (req, res) => {
     const data = _.pick(req.body, ['name', 'email', 'password', 'phone'])
+
     data.password = await bcrypt.hash(req.body.password, 8)
     try {
         const user = await User.create(data)
@@ -27,9 +28,9 @@ router.post('/', async function (req, res) {
 
 
 
-router.get('/', async function (req, res) {
+router.get('/', async (req, res) => {
     try {
-        const users = await User.find({})
+        const users = await User.find({}, { password: 0 })
         if(!users) {
             return res.status(404).send({})
         }
@@ -40,12 +41,13 @@ router.get('/', async function (req, res) {
 });
 
 
-router.get('/:id', async function (req, res) {
+router.get('/:id', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id)
+        const user = await User.findById(req.params.id, { password: 0 }).populate('orders')
         if(!user) {
             return res.status(404).send("No user found.");
         }
+
         res.status(200).send(user);
     } catch(err) {
         return res.status(500).send("There was a problem finding the user.")
@@ -53,7 +55,7 @@ router.get('/:id', async function (req, res) {
 });
 
 
-router.delete('/:id', async function (req, res) {
+router.delete('/:id', async (req, res) => {
     try {
         const user = User.findByIdAndRemove(req.params.id);
         if(!user) {
@@ -67,7 +69,7 @@ router.delete('/:id', async function (req, res) {
 
 
 
-router.put('/:id', async function (req, res) {
+router.patch('/:id', async (req, res) => {
     const data = _.pick(req.body, ['name', 'email', 'phone', 'password'])
     data.password = await bcrypt.hash(req.body.password, 8)
     try {

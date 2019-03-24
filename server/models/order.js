@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
 
 const Order = mongoose.model('Order', {
     title: {
@@ -24,6 +25,10 @@ const Order = mongoose.model('Order', {
     active: {
         type: Boolean,
         default: false
+    },
+    customer: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 
