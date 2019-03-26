@@ -15,10 +15,10 @@ router.post('/', verifyToken, async (req, res) => {
     const data = _.pick(req.body, ['title', 'description', 'maxPrice', 'dueDate', 'active'])
 
     try {
-        const user = await User.findById(req.userId, { password: 0 })
+        const user = await User.findById(req.userId, { password: 0 }).populate('customer')
         const order = new Order(data)
 
-        order.customer = user
+        order.customer = user.customer
         await order.save()
 
         user.orders.push(order)
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate('customer', { password: 0 })
+        const order = await Order.findById(req.params.id).populate('customer')
         if(!order) {
             return res.status(404).send("No order found.");
         }
@@ -85,12 +85,12 @@ router.delete('/:id', verifyToken, async (req, res) => {
 router.patch('/:id', verifyToken, async (req, res) => {
     const data = _.pick(req.body, ['title', 'description', 'maxPrice', 'dueDate', 'active'])
     try {
-        let order = await Order.findById(req.params.id);
+        let order = await Order.findById(req.params.id).populate('customer')
         if(!order) {
             return res.status(404).send("No order found.");
         }
 
-        if(order.customer.toHexString() !== req.userId) {
+        if(order.customer.user.toHexString() !== req.userId) {
             return res.status(403).send("You don't have enough permissions to edit this order");
         }
 

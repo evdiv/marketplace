@@ -26,10 +26,18 @@ const User = mongoose.model('User', {
         type: Boolean,
         default: true
     },
-    orders: [{
+    createdAt: {
+        type: Date,
+        required: false
+    },
+    customer: {
         type: Schema.Types.ObjectId,
-        ref: 'Order'
-    }]
+        ref: 'Customer'
+    },
+    labour: {
+        type: Schema.Types.ObjectId,
+        ref: 'Labour'
+    },
 });
 
 module.exports = User
