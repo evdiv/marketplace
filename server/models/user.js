@@ -5,22 +5,18 @@ const User = mongoose.model('User', {
     name: {
         type: String,
         required: true,
-        minlength: 5,
+        minlength: 1,
         trim: true
     },
     email: {
         type: String,
         required: true,
-        minlength: 5,
+        minlength: 1,
         trim: true
     },
     password: {
         type: String,
         required: true,
-    },
-    phone: {
-        type: String,
-        required: false,
     },
     active: {
         type: Boolean,

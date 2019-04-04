@@ -6,10 +6,6 @@ const Labour = mongoose.model('Labour', {
         type: Boolean,
         default: true
     },
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
     description: {
         type: String,
         required: true,
@@ -37,6 +33,10 @@ const Labour = mongoose.model('Labour', {
     createdAt: {
         type: Date,
         required: false
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     categories: [{
         type: Schema.Types.ObjectId,

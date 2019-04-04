@@ -11,7 +11,7 @@ const Order = mongoose.model('Order', {
     description: {
         type: String,
         required: true,
-        minlength: 25,
+        minlength: 10,
         trim: true
     },
     maxPrice: {
@@ -35,7 +35,11 @@ const Order = mongoose.model('Order', {
         required: false,
         minlength: 5,
         trim: true
-    },            
+    }, 
+    phone: {
+        type: String,
+        required: false,
+    },         
     dueDate: {
         type: Date,
         required: false,
@@ -44,6 +48,10 @@ const Order = mongoose.model('Order', {
         type: Date,
         required: false
     },
+    completedAt: {
+        type: Date,
+        required: false
+    },    
     active: {
         type: Boolean,
         default: false
@@ -51,11 +59,7 @@ const Order = mongoose.model('Order', {
     categories: [{
         type: Schema.Types.ObjectId,
         ref: 'Categories'
-    }],    
-    complete: {
-        type: Boolean,
-        default: false
-    },    
+    }],     
     customer: {
         type: Schema.Types.ObjectId,
         ref: 'Customer'

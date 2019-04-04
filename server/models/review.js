@@ -31,7 +31,7 @@ const Review = mongoose.model('Review', {
         required: false,
         min: 0,
         max: 5
-    },
+    }, 
     active: {
         type: Boolean,
         default: false
@@ -39,7 +39,15 @@ const Review = mongoose.model('Review', {
     createdAt: {
         type: Date,
         required: false
-    }
+    },
+    customer: {
+        type: Schema.Types.ObjectId,
+        ref: 'Customer'
+    },
+    labour: {
+        type: Schema.Types.ObjectId,
+        ref: 'Labour'        
+    },   
 });
 
 module.exports = Review

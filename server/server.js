@@ -4,16 +4,16 @@ const {port} = require('./config/config');
 
 const app = express();
 
-const UserController = require('./controllers/UserController');
-const AuthController = require('./controllers/AuthController');
-const OrderController = require('./controllers/OrderController');
-const CategoryController = require('./controllers/CategoryController');
+//Routes
+const auth = require('./routes/auth');
+const users = require('./routes/users');
+const customers = require('./routes/customers');
+const orders = require('./routes/orders');
 
-
-app.use('/users', UserController);
-app.use('/auth', AuthController);
-app.use('/orders', OrderController);
-app.use('/categories', CategoryController);
+app.use('/auth', auth);
+app.use('/users', users);
+app.use('/customers', customers);
+app.use('/orders', orders);
 
 
 app.listen(port, () => {
