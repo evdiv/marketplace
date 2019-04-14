@@ -1,8 +1,9 @@
 const express = require('express');
+const cors = require('cors')
 const {mongoose} = require('./db/mongoose');
 const {port} = require('./config/config');
 
-const app = express();
+const app = express(); 
 
 //Routes
 const auth = require('./routes/auth');
@@ -10,6 +11,7 @@ const users = require('./routes/users');
 const customers = require('./routes/customers');
 const orders = require('./routes/orders');
 
+app.use(cors())
 app.use('/auth', auth);
 app.use('/users', users);
 app.use('/customers', customers);
