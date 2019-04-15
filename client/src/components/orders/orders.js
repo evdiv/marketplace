@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 class Orders extends Component {
     constructor() {
@@ -11,27 +13,28 @@ class Orders extends Component {
     componentDidMount() {
         fetch('/orders')
         .then(response => {
-            console.log(response);
             return response.json();
           })
         .then((data) => { 
-          console.log(data);
           this.setState({ orders: data.orders}); 
         });
     }
 
     render() {
-        console.log(this.state.orders)
-        return (
-            <div>
-                <h2>Orders</h2>
-                <ul>
-                    {this.state.orders.map(order => 
-                        <li key={order._id}>{ order.title }</li>
-                    )}
-                </ul>
-            </div>
-        );
+      return (
+        <Paper elevation={1}>
+          <Typography variant="h5" component="h3">
+            Orders
+          </Typography>
+          <Typography component="p">
+            <ul>
+                  {this.state.orders.map(order => 
+                      <li key={order._id}>{ order.title }</li>
+                  )}
+            </ul>
+          </Typography>
+        </Paper>
+      );
     }
 }
 
